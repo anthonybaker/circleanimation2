@@ -1,10 +1,15 @@
-
 // Get the canvas object and the context
 var canvas = document.getElementById('canvas');
 var mainContext = canvas.getContext('2d');
 
-// collection of circles
-var circles = [];
+// variables for drawing the circle
+var radius = 175;
+var endPercent = 101;
+var curPerc = 0;
+var counterClockwise = false;
+var circ = Math.PI * 2;
+var quart = Math.PI / 2;
+var tail = 0;
 
 
 var requestAnimationFrame = window.requestAnimationFrame || 
@@ -12,71 +17,39 @@ var requestAnimationFrame = window.requestAnimationFrame ||
                             window.webkitRequestAnimationFrame || 
                             window.msRequestAnimationFrame;
 
-// function to create a circle
-function Circle(radius, speed, width, xPos, yPos) {
-    this.radius = radius;
-    this.speed = speed;
-    this.width = width;
-    this.xPos = xPos;
-    this.yPos = yPos;
-    this.opacity = 0.05 + Math.random() * 0.5;
-
-    this.counter = 0;
-
-    var signHelper = Math.floor(Math.random() * 2);
-
-    if (signHelper == 1) {
-        this.sign = -1;
-    } else {
-        this.sign = 1;
-    }
-}
-
-// Function to update the circle
-Circle.prototype.update = function() {
- 
-      this.counter += this.sign * this.speed;
- 
-      mainContext.beginPath();
- 
-      mainContext.arc(this.xPos + Math.cos(this.counter / 100) * this.radius,
-        this.yPos + Math.sin(this.counter / 100) * this.radius,
-        this.width,
-        0,
-        Math.PI * 2,
-        false);
- 
-      mainContext.closePath();
- 
-      mainContext.fillStyle = 'rgba(185, 211, 238,' + this.opacity + ')';
-      mainContext.fill();
-    };
-
 // Function to draw
-function draw() {
+function drawCircle() {
+
+    // clear all contents of the canvas
     mainContext.clearRect(0, 0, canvas.width, canvas.height);
+         
+    // color in the background
+    mainContext.fillStyle = "#EEEEEE";
+    mainContext.fillRect(0, 0, canvas.width, canvas.height);
+     
+    // circle style
+    mainContext.lineWidth = 10;
+    mainContext.strokeStyle = '#99CC33';
 
-    for (var i = 0; i < circles.length; i++) {
-        var myCircle = circles[i];
-        myCircle.update();
-    }
+    // draw the circle
+    mainContext.beginPath();
 
-    requestAnimationFrame(draw);
-}
-
-function drawCircles() {
+    mainContext.arc(canvas.width/2, canvas.height/2, radius, -(quart) + tail, ((circ) * (curPerc / 100)) - quart, false);
+    mainContext.stroke();
     
-    for (var i = 0; i < 100; i++) {
-
-        var randomX = Math.round(Math.random() * canvas.width);
-        var randomY = Math.round(Math.random() * canvas.height);
-        var speed = 0.2 + Math.random() * 3;
-        var size = 5 + Math.random() * 100;
-
-        var circle = new Circle(100, speed, size, randomX, randomY);
-            circles.push(circle);
+    // tail can be used to remove trailing path and do cool spinning animations
+    //tail += 0.01;
+    if(curPerc < 100){
+        curPerc++;
+    } else{
+        curPerc = 0;
     }
-    draw();
+
+    //mainContext.closePath();
+
+    // call drawCircle every time Browser redraws (around 60 times per second)
+    requestAnimationFrame(drawCircle);
+
 }
 
 
@@ -92,6 +65,6 @@ function resizeCanvas() {
      * you resize the browser window and the canvas goes will be cleared.
      */
 
-    drawCircles();
+    drawCircle();
 }
 resizeCanvas();
