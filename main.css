@@ -1,3 +1,8 @@
+body {
+      margin: 10px;
+      padding: 00px;
+}
+
 canvas {
-	border: 3px #CCC solid;
+	border: 1px #CCC solid;
 }
